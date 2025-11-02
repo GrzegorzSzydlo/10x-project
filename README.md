@@ -1,94 +1,110 @@
-# 10x Astro Starter
+# ProjectFlow
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+## Table of Contents
+
+- [Project Description](#project-description)
+- [Tech Stack](#tech-stack)
+- [Getting Started Locally](#getting-started-locally)
+- [Available Scripts](#available-scripts)
+- [Project Scope](#project-scope)
+- [Project Status](#project-status)
+- [License](#license)
+
+## Project Description
+
+ProjectFlow is a web application designed to streamline project management for small and medium-sized teams. It aims to centralize work planning by providing a simple yet powerful interface for creating task hierarchies, managing milestones, and visually tracking progress on a Kanban board. The primary goal is to provide a single, coherent source of truth for project status, moving teams away from scattered and inefficient planning methods.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+This project is built with a modern, component-based architecture.
 
-## Prerequisites
+- **Framework**: [Astro](https://astro.build/)
+- **UI Library**: [React](https://react.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [Shadcn/ui](https://ui.shadcn.com/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Node.js Version**: 22.14.0
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+## Getting Started Locally
 
-## Getting Started
+To set up and run this project on your local machine, follow these steps.
 
-1. Clone the repository:
+### Prerequisites
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
-
-2. Install dependencies:
+Make sure you have [Node.js](https://nodejs.org/) installed. It is recommended to use a version manager like [nvm](https://github.com/nvm-sh/nvm) to ensure you are using the correct version specified in the `.nvmrc` file.
 
 ```bash
-npm install
+nvm use
 ```
 
-3. Run the development server:
+### Installation
+
+1.  Clone the repository to your local machine:
+
+    ```bash
+    git clone https://github.com/your-username/projectflow.git
+    cd projectflow
+    ```
+
+2.  Install the project dependencies:
+    ```bash
+    npm install
+    ```
+
+### Running the Development Server
+
+Start the local development server with hot-reloading enabled:
 
 ```bash
 npm run dev
 ```
 
-4. Build for production:
-
-```bash
-npm run build
-```
+The application will be available at `http://localhost:4321`.
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+This project includes the following scripts defined in `package.json`:
 
-## Project Structure
+- `npm run dev`: Starts the development server.
+- `npm run build`: Builds the application for production.
+- `npm run preview`: Serves the production build locally for previewing.
+- `npm run lint`: Lints the codebase for errors and style issues.
+- `npm run lint:fix`: Automatically fixes linting issues.
+- `npm run format`: Formats the code using Prettier.
 
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
-```
+## Project Scope
 
-## AI Development Support
+The MVP (Minimum Viable Product) of ProjectFlow focuses on delivering the core features necessary for effective project management.
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+### Key Features
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+- **Role-Based Access Control**: Three user roles (`Administrator`, `Project Manager`, `Team Member`) with distinct permissions.
+- **Project Management**: Create projects and manage team member access.
+- **Task Hierarchy**: A two-level system supporting tasks and sub-tasks.
+- **Kanban Board**: An interactive board with four fixed columns: `To Do`, `In Progress`, `Testing`, and `Done`.
+- **Milestones**: Group tasks under larger project goals.
+- **Filtering**: Filter the Kanban board by assigned user or milestone.
+- **Task History**: A simple activity log for tracking changes to tasks.
 
-### Cursor IDE
+### Out of Scope for MVP
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+The following features are intentionally excluded from the initial release but may be considered for future versions:
 
-### GitHub Copilot
+- Advanced notifications (e.g., Slack, email).
+- In-app communication (chat, comments).
+- Time tracking and reporting.
+- Customizable user roles and permissions.
+- Integrations with external calendars.
+- Native mobile applications.
+- Data import/export functionality.
+- File attachments for tasks.
 
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`
+## Project Status
 
-### Windsurf
+**In Development**
 
-The `.windsurfrules` file contains AI configuration for Windsurf.
-
-## Contributing
-
-Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
+This project is currently in the development phase. The core features for the MVP are being actively built.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
