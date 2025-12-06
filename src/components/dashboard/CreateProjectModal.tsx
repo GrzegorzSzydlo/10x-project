@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createProjectSchema } from "@/api/validation/projects";
+import { devLog } from "@/api/utils";
 import type { CreateProjectCommand, ProjectDetailsDto } from "@/types";
 import { z } from "zod";
 
@@ -79,10 +80,7 @@ export function CreateProjectModal({ isOpen, onOpenChange, onProjectCreated }: C
       onOpenChange(false);
       onProjectCreated(newProject);
     } catch (error) {
-      // Log error for debugging in development
-      if (import.meta.env.DEV) {
-        console.error("Error creating project:", error);
-      }
+      devLog("error", "Error creating project:", error);
       setError("Network error. Please check your connection and try again.");
     } finally {
       setIsLoading(false);

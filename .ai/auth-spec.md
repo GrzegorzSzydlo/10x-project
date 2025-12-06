@@ -6,16 +6,12 @@
 
 Wprowadzone zostaną dedykowane strony dla procesów autentykacji, które będą renderowane po stronie serwera.
 
-- **`/src/pages/login.astro`**: Strona logowania. Będzie zawierać i renderować komponent React `LoginForm`.
-- **`/src/pages/register.astro`**: Strona rejestracji. Będzie zawierać i renderować komponent React `RegisterForm`.
-- **`/src/pages/password-recovery.astro`**: Strona do inicjowania procesu odzyskiwania hasła.
-- **`/src/pages/update-password.astro`**: Strona, na którą użytkownik zostanie przekierowany z linku w mailu, aby ustawić nowe hasło.
+- **`/src/pages/login.astro`**: Strona logowania. Będzie zawierać i renderować komponent React `LoginForm`. Używa standardowego `Layout.astro` z wyśrodkowanym kontenerem.
+- **`/src/pages/register.astro`**: Strona rejestracji. Będzie zawierać i renderować komponent React `RegisterForm`. Używa standardowego `Layout.astro` z wyśrodkowanym kontenerem.
+- **`/src/pages/password-recovery.astro`**: Strona do inicjowania procesu odzyskiwania hasła. Używa standardowego `Layout.astro` z wyśrodkowanym kontenerem.
+- **`/src/pages/update-password.astro`**: Strona, na którą użytkownik zostanie przekierowany z linku w mailu, aby ustawić nowe hasło. Używa standardowego `Layout.astro` z wyśrodkowanym kontenerem.
 
-#### 1.2. Nowe Layouty (Astro)
-
-- **`/src/layouts/AuthLayout.astro`**: Nowy layout przeznaczony dla stron `login`, `register` i `password-recovery`. Będzie zawierał uproszczoną strukturę (np. wyśrodkowany kontener na formularz) bez elementów nawigacyjnych dostępnych dla zalogowanego użytkownika.
-
-#### 1.3. Nowe Komponenty (React)
+#### 1.2. Nowe Komponenty (React)
 
 Interaktywne formularze zostaną zaimplementowane jako komponenty React, aby obsłużyć stan, walidację i komunikację z API bez przeładowywania strony.
 
@@ -23,16 +19,20 @@ Interaktywne formularze zostaną zaimplementowane jako komponenty React, aby obs
   - **Odpowiedzialność**: Zarządzanie stanem pól (email, hasło), obsługa zdarzenia `submit`, walidacja po stronie klienta (np. czy pola nie są puste) oraz komunikacja z endpointem `/api/auth/login`.
   - **Użyte komponenty UI**: `Input`, `Button`, `Label` z biblioteki `shadcn/ui`.
 - **`/src/components/auth/RegisterForm.tsx`**:
-  - **Odpowiedzialność**: Zarządzanie stanem pól (email, hasło, powtórz hasło), walidacja (zgodność haseł, minimalna długość), komunikacja z endpointem `/api/auth/register`.
+  - **Odpowiedzialność**: Zarządzanie stanem pól (email, hasło, powtórz hasło), walidacja (zgodność haseł, minimalna długość), komunikacja z endpointem `/api/auth/register`. Wyświetla komunikat sukcesu po poprawnej rejestracji.
 - **`/src/components/auth/PasswordRecoveryForm.tsx`**:
-  - **Odpowiedzialność**: Zarządzanie stanem pola email i komunikacja z endpointem `/api/auth/password-recovery`.
+  - **Odpowiedzialność**: Zarządzanie stanem pola email i komunikacja z endpointem `/api/auth/password-recovery`. Wyświetla komunikat sukcesu po wysłaniu linku.
+- **`/src/components/auth/UpdatePasswordForm.tsx`**:
+  - **Odpowiedzialność**: Zarządzanie stanem pól (hasło, powtórz hasło), walidacja i komunikacja z endpointem `/api/auth/update-password`. Wyświetla komunikat sukcesu po zmianie hasła.
 
-#### 1.4. Walidacja i Obsługa Błędów
+#### 1.3. Walidacja i Obsługa Błędów
+
+- **Schematy Walidacji**: Plik `/src/api/validation/auth.ts` zawiera schematy Zod dla wszystkich formularzy: `loginSchema`, `registerSchema`, `passwordRecoverySchema`, `updatePasswordSchema`.
 
 - **Walidacja Client-Side**: Formularze React użyją biblioteki `zod` do wstępnej walidacji formatu danych (np. poprawność adresu e-mail, minimalna długość hasła).
 - **Komunikaty**: Błędy walidacji oraz błędy zwrócone z API (np. "Użytkownik o tym adresie e-mail już istnieje", "Nieprawidłowe dane logowania") będą wyświetlane dynamicznie pod odpowiednimi polami formularza.
 
-#### 1.5. Scenariusze Użytkownika
+#### 1.4. Scenariusze Użytkownika
 
 - **Niezalogowany użytkownik**: Próba wejścia na stronę wymagającą autentykacji (np. `/dashboard`) spowoduje przekierowanie do `/login`.
 - **Logowanie**: Po poprawnym zalogowaniu na stronie `/login`, użytkownik zostanie przekierowany na stronę główną (`/`).

@@ -1,7 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { AppHeader } from "../components/AppHeader";
 import { ProjectList } from "../components/dashboard/ProjectList";
 import { getUserProjects } from "../api/services/projects/getUserProjects";
+import { devLog } from "../api/utils";
 import type { ProjectDto, User } from "../types";
 
 // Check if user is authenticated
@@ -14,18 +16,30 @@ if (!Astro.locals.session) {
 const authUser = Astro.locals.session.user;
 
 // Get user data with role information
-const { data: userData, error: userError } = await Astro.locals.supabase
+let { data: userData, error: userError } = await Astro.locals.supabase
   .from("users")
   .select("*")
   .eq("id", authUser.id)
   .single();
 
-if (userError || !userData) {
-  // Log error for debugging in development
-  if (import.meta.env.DEV) {
-    console.error("Failed to fetch user data:", userError);
+// If user doesn't exist in public.users table, create it
+// This handles cases where user was created before the trigger was added
+if (userError?.code === "PGRST116" || !userData) {
+  const { data: newUser, error: insertError } = await Astro.locals.supabase
+    .from("users")
+    .insert({
+      id: authUser.id,
+      role: "team_member",
+    })
+    .select()
+    .single();
+
+  if (insertError) {
+    devLog("error", "Failed to create user profile:", insertError);
+    return new Response("Failed to create user profile", { status: 500 });
   }
-  return new Response("User data not found", { status: 404 });
+
+  userData = newUser;
 }
 
 const user = userData as User;
@@ -38,15 +52,14 @@ try {
     supabase: Astro.locals.supabase,
   });
 } catch (error) {
-  // Log error for debugging in development
-  if (import.meta.env.DEV) {
-    console.error("Failed to fetch user projects:", error);
-  }
+  devLog("error", "Failed to fetch user projects:", error);
   // Continue with empty array - user will see "no projects" message
 }
 ---
 
 <Layout title="Dashboard - Moje projekty">
+  <AppHeader user={user} slot="header" client:load />
+
   <main class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <ProjectList client:load initialProjects={initialProjects} user={user} />

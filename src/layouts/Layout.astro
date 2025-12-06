@@ -18,6 +18,7 @@ const { title = "10x Astro Starter" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    <slot name="header" />
     <slot />
   </body>
 </html>
