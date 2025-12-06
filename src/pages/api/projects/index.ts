@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createProjectSchema } from "../../../api/validation/projects";
 import { createProject } from "../../../api/services/projects/createProject";
+import { getUserProjects } from "../../../api/services/projects/getUserProjects";
 import { logApiError } from "../../../api/services/logging/logApiError";
 import type { UserRole } from "../../../types";
 
@@ -136,6 +137,66 @@ export const POST: APIRoute = async ({ locals, request }) => {
         "Content-Type": "application/json",
         Location: `/projects/${project.id}`,
       },
+    });
+  } catch (error) {
+    // Handle unexpected errors
+    const detail = error instanceof Error ? error.message : "Unknown error";
+
+    logApiError({
+      endpoint,
+      status: 500,
+      detail: `Unexpected error: ${detail}`,
+      correlationId,
+    });
+
+    return new Response(
+      JSON.stringify({
+        error: "Internal server error",
+        correlationId,
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+};
+
+/**
+ * GET /api/projects
+ * Returns all projects where the authenticated user is a member.
+ */
+export const GET: APIRoute = async ({ locals }) => {
+  const endpoint = "GET /api/projects";
+  let correlationId: string | undefined;
+
+  try {
+    // Step 1: Check authentication
+    if (!locals.session) {
+      logApiError({
+        endpoint,
+        status: 401,
+        detail: "No session found in locals",
+      });
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const authUser = locals.session.user;
+    correlationId = `req_${Date.now()}_${authUser.id.substring(0, 8)}`;
+
+    // Step 2: Fetch user projects using service
+    const projects = await getUserProjects({
+      userId: authUser.id,
+      supabase: locals.supabase,
+    });
+
+    // Step 3: Return success response
+    return new Response(JSON.stringify({ data: projects }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     // Handle unexpected errors

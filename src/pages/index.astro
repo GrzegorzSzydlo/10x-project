@@ -1,8 +1,55 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+import { ProjectList } from "../components/dashboard/ProjectList";
+import { getUserProjects } from "../api/services/projects/getUserProjects";
+import type { ProjectDto, User } from "../types";
+
+// Check if user is authenticated
+if (!Astro.locals.session) {
+  // Redirect to login - for now just show error
+  // In a real app, you'd redirect to a login page
+  return Astro.redirect("/login");
+}
+
+const authUser = Astro.locals.session.user;
+
+// Get user data with role information
+const { data: userData, error: userError } = await Astro.locals.supabase
+  .from("users")
+  .select("*")
+  .eq("id", authUser.id)
+  .single();
+
+if (userError || !userData) {
+  // Log error for debugging in development
+  if (import.meta.env.DEV) {
+    console.error("Failed to fetch user data:", userError);
+  }
+  return new Response("User data not found", { status: 404 });
+}
+
+const user = userData as User;
+
+// Get user projects
+let initialProjects: ProjectDto[] = [];
+try {
+  initialProjects = await getUserProjects({
+    userId: authUser.id,
+    supabase: Astro.locals.supabase,
+  });
+} catch (error) {
+  // Log error for debugging in development
+  if (import.meta.env.DEV) {
+    console.error("Failed to fetch user projects:", error);
+  }
+  // Continue with empty array - user will see "no projects" message
+}
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="Dashboard - Moje projekty">
+  <main class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ProjectList client:load initialProjects={initialProjects} user={user} />
+    </div>
+  </main>
 </Layout>

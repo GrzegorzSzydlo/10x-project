@@ -71,8 +71,10 @@ Następujące funkcje są świadomie wyłączone z zakresu MVP, aby zapewnić sz
 - Kryteria akceptacji:
   1. Formularz rejestracji zawiera pola na adres e-mail i hasło.
   2. System waliduje, czy podany e-mail nie jest już zarejestrowany.
-  3. Po pomyślnej rejestracji użytkownik jest automatycznie zalogowany i przekierowany do panelu głównego.
-  4. Nowo zarejestrowany użytkownik domyślnie otrzymuje rolę "Członek Zespołu".
+  3. Po pomyślnej rejestracji na podany adres e-mail wysyłany jest link weryfikacyjny.
+  4. Użytkownik widzi komunikat informujący o konieczności weryfikacji adresu e-mail.
+  5. Po kliknięciu w link aktywacyjny, konto użytkownika zostaje aktywowane, a on sam jest przekierowany na stronę logowania.
+  6. Nowo zarejestrowany użytkownik domyślnie otrzymuje rolę "Członek Zespołu".
 
 ### ID: US-002
 
