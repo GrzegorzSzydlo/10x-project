@@ -43,7 +43,7 @@ export function ProjectList({ initialProjects, user }: ProjectListProps) {
         </div>
 
         {canCreateProjects && (
-          <Button onClick={handleOpenModal} className="px-6">
+          <Button onClick={handleOpenModal} className="px-6" data-test-id="create-project-button">
             Utwórz nowy projekt
           </Button>
         )}
@@ -51,7 +51,7 @@ export function ProjectList({ initialProjects, user }: ProjectListProps) {
 
       {/* Projects Grid */}
       {projects.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-test-id="projects-grid">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
@@ -81,7 +81,9 @@ export function ProjectList({ initialProjects, user }: ProjectListProps) {
             </p>
             {canCreateProjects && (
               <div className="mt-6">
-                <Button onClick={handleOpenModal}>Utwórz pierwszy projekt</Button>
+                <Button onClick={handleOpenModal} data-test-id="create-first-project-button">
+                  Utwórz pierwszy projekt
+                </Button>
               </div>
             )}
           </div>

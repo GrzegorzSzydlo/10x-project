@@ -42,20 +42,24 @@ export const onRequest = defineMiddleware(async (context, next) => {
       headers: request.headers,
     });
 
-    // IMPORTANT: Always get user session first before any other operations
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    locals.session = session;
     locals.supabase = supabase;
 
-    if (session?.user) {
+    // IMPORTANT: Use getUser() instead of getSession() for security
+    // getUser() validates the JWT by contacting Supabase Auth server
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (user && !error) {
+      // Create session object for backward compatibility
+      locals.session = { user, access_token: "" } as any;
       locals.user = {
-        email: session.user.email,
-        id: session.user.id,
+        email: user.email,
+        id: user.id,
       };
     } else {
+      locals.session = null;
       locals.user = null;
     }
   }

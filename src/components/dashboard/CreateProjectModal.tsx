@@ -95,7 +95,7 @@ export function CreateProjectModal({ isOpen, onOpenChange, onProjectCreated }: C
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" data-test-id="create-project-modal">
         <DialogHeader>
           <DialogTitle>Utwórz nowy projekt</DialogTitle>
           <DialogDescription>Wprowadź nazwę nowego projektu. Nazwa musi zawierać od 3 do 120 znaków.</DialogDescription>
@@ -114,25 +114,36 @@ export function CreateProjectModal({ isOpen, onOpenChange, onProjectCreated }: C
               disabled={isLoading}
               aria-label="Nazwa projektu"
               aria-describedby={validationError ? "name-error" : undefined}
+              data-test-id="project-name-input"
             />
             {validationError && (
-              <p id="name-error" className="text-sm text-red-600" role="alert">
+              <p id="name-error" className="text-sm text-red-600" role="alert" data-test-id="validation-error">
                 {validationError}
               </p>
             )}
           </div>
 
           {error && (
-            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md" role="alert">
+            <div
+              className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md"
+              role="alert"
+              data-test-id="api-error"
+            >
               {error}
             </div>
           )}
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClose}
+              disabled={isLoading}
+              data-test-id="cancel-button"
+            >
               Anuluj
             </Button>
-            <Button type="submit" disabled={!isFormValid || isLoading}>
+            <Button type="submit" disabled={!isFormValid || isLoading} data-test-id="submit-button">
               {isLoading ? "Tworzenie..." : "Utwórz"}
             </Button>
           </div>
