@@ -1,6 +1,6 @@
 /**
  * API Error logging helper
- * 
+ *
  * This helper provides centralized error logging for API endpoints.
  * Currently uses console.error as fallback, but can be extended to use
  * external monitoring services like Sentry or write to database error tables.
@@ -17,7 +17,7 @@ export interface ApiError {
 
 /**
  * Logs API errors with optional correlation ID for tracking
- * 
+ *
  * @param error - Error details to log
  */
 export function logApiError(error: ApiError): void {

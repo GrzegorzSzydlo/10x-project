@@ -21,7 +21,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // Legacy support: Extract session from Authorization header for API endpoints
   const authHeader = request.headers.get("Authorization");
-  
+
   if (authHeader?.startsWith("Bearer ")) {
     // Bearer token authentication for API endpoints
     const token = authHeader.substring(7);

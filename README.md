@@ -23,6 +23,9 @@ This project is built with a modern, component-based architecture.
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: [Shadcn/ui](https://ui.shadcn.com/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Backend**: [Supabase](https://supabase.com/)
+- **Testing (Unit & Integration)**: [Vitest](https://vitest.dev/), [React Testing Library](https://testing-library.com/react)
+- **Testing (E2E)**: [Playwright](https://playwright.dev/)
 - **Node.js Version**: 22.14.0
 
 ## Getting Started Locally

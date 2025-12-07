@@ -16,14 +16,16 @@ export async function getUserProjects({ userId, supabase }: GetUserProjectsOptio
   // Get projects where user is a member through project_members table
   const { data: projectMemberships, error: membershipError } = await supabase
     .from("project_members")
-    .select(`
+    .select(
+      `
       project:projects (
         id,
         name,
         owner_id,
         created_at
       )
-    `)
+    `
+    )
     .eq("user_id", userId);
 
   if (membershipError) {
@@ -32,9 +34,9 @@ export async function getUserProjects({ userId, supabase }: GetUserProjectsOptio
 
   // Transform the data to match ProjectDto shape
   const projects: ProjectDto[] = projectMemberships
-    .map(membership => membership.project)
-    .filter(project => project !== null)
-    .map(project => ({
+    .map((membership) => membership.project)
+    .filter((project) => project !== null)
+    .map((project) => ({
       id: project.id,
       name: project.name,
       owner_id: project.owner_id,
