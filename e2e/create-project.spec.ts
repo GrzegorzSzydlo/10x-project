@@ -1,8 +1,14 @@
 import { test, expect } from "./fixtures/page-objects";
 import { getE2ECredentials } from "./helpers/env";
 
+test.describe.configure({ mode: "serial" });
+
 test.describe("Create Project E2E Flow", () => {
-  test.beforeEach(async ({ loginPage }) => {
+  test.beforeEach(async ({ loginPage, context }) => {
+    // Clear all cookies and storage to ensure clean state
+    await context.clearCookies();
+    await context.clearPermissions();
+
     // Login as project manager or administrator
     await loginPage.goto();
     const { username, password } = getE2ECredentials();

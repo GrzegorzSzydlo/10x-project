@@ -8,8 +8,6 @@ import type { ProjectDto, User } from "../types";
 
 // Check if user is authenticated
 if (!Astro.locals.session) {
-  // Redirect to login - for now just show error
-  // In a real app, you'd redirect to a login page
   return Astro.redirect("/login");
 }
 
@@ -23,7 +21,6 @@ let { data: userData, error: userError } = await Astro.locals.supabase
   .single();
 
 // If user doesn't exist in public.users table, create it
-// This handles cases where user was created before the trigger was added
 if (userError?.code === "PGRST116" || !userData) {
   const { data: newUser, error: insertError } = await Astro.locals.supabase
     .from("users")
@@ -53,11 +50,10 @@ try {
   });
 } catch (error) {
   devLog("error", "Failed to fetch user projects:", error);
-  // Continue with empty array - user will see "no projects" message
 }
 ---
 
-<Layout title="Dashboard - Moje projekty">
+<Layout title="Projekty - 10x Project">
   <AppHeader user={user} userEmail={authUser.email} slot="header" client:load />
 
   <main class="min-h-screen bg-gray-50 py-6 md:py-8">

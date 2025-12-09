@@ -36,7 +36,11 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        // Start each test with clean browser state (no cookies/storage)
+        storageState: undefined,
+      },
     },
   ],
 

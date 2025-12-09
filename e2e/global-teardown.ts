@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../src/db/database.types";
 import dotenv from "dotenv";
@@ -48,6 +49,7 @@ async function globalTeardown() {
     }
 
     const projectIds = testProjects?.map((p) => p.id) || [];
+    console.log(`Found ${projectIds.length} test projects to clean up`);
 
     if (projectIds.length > 0) {
       // 3. Delete tasks in test user's projects
@@ -78,13 +80,15 @@ async function globalTeardown() {
       }
 
       // 6. Delete projects owned by test user
-      const { error: projectsError } = await supabase.from("projects").delete().eq("owner_id", testUserId);
+      const { error: projectsError } = await supabase.from("projects").delete().eq("owner_id", testUserId).select();
 
       if (projectsError) {
         console.error("Error deleting projects:", projectsError);
       } else {
         console.log(`✓ Deleted ${projectIds.length} test projects`);
       }
+    } else {
+      console.log("No test projects found to clean up");
     }
 
     console.log("Database cleanup completed successfully!");

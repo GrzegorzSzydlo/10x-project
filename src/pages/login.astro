@@ -3,6 +3,11 @@ import Layout from "@/layouts/Layout.astro";
 import { LoginForm } from "@/components/auth/LoginForm";
 
 export const prerender = false;
+
+// Redirect to dashboard if already logged in
+if (Astro.locals.session?.user) {
+  return Astro.redirect("/");
+}
 ---
 
 <Layout title="Logowanie - 10x Project Manager">

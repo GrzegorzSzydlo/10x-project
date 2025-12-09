@@ -1,11 +1,14 @@
 ---
 import "../styles/global.css";
+import { MobileNavigation } from "../components/MobileNavigation";
 
 interface Props {
   title?: string;
+  showMobileNav?: boolean;
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title = "10x Astro Starter", showMobileNav = true } = Astro.props;
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -17,9 +20,13 @@ const { title = "10x Astro Starter" } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body>
+  <body class="pb-16 md:pb-0">
     <slot name="header" />
     <slot />
+    {showMobileNav && <MobileNavigation currentPath={currentPath} client:load />}
+    <footer class="hidden md:block">
+      <slot name="footer" />
+    </footer>
   </body>
 </html>
 

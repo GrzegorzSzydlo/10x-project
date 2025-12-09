@@ -36,14 +36,14 @@ export function ProjectList({ initialProjects, user }: ProjectListProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Moje projekty</h1>
-          <p className="text-gray-600 mt-1">Zarządzaj swoimi projektami i śledź postępy</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Moje projekty</h1>
+          <p className="text-sm md:text-base text-gray-600 mt-1">Zarządzaj swoimi projektami i śledź postępy</p>
         </div>
 
         {canCreateProjects && (
-          <Button onClick={handleOpenModal} className="px-6" data-test-id="create-project-button">
+          <Button onClick={handleOpenModal} className="w-full md:w-auto px-6" data-test-id="create-project-button">
             Utwórz nowy projekt
           </Button>
         )}
@@ -51,16 +51,16 @@ export function ProjectList({ initialProjects, user }: ProjectListProps) {
 
       {/* Projects Grid */}
       {projects.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-test-id="projects-grid">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6" data-test-id="projects-grid">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <div className="mx-auto max-w-md">
+        <div className="text-center py-8 md:py-12">
+          <div className="mx-auto max-w-md px-4">
             <svg
-              className="mx-auto h-12 w-12 text-gray-400"
+              className="mx-auto h-10 w-10 md:h-12 md:w-12 text-gray-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -73,15 +73,19 @@ export function ProjectList({ initialProjects, user }: ProjectListProps) {
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
               />
             </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">Brak projektów</h3>
-            <p className="mt-2 text-gray-500">
+            <h3 className="mt-4 text-base md:text-lg font-medium text-gray-900">Brak projektów</h3>
+            <p className="mt-2 text-sm md:text-base text-gray-500">
               {canCreateProjects
                 ? "Nie masz jeszcze żadnych projektów. Utwórz swój pierwszy projekt, aby rozpocząć pracę."
                 : "Nie należysz jeszcze do żadnego projektu. Poproś kierownika o dodanie Cię do projektu."}
             </p>
             {canCreateProjects && (
               <div className="mt-6">
-                <Button onClick={handleOpenModal} data-test-id="create-first-project-button">
+                <Button
+                  onClick={handleOpenModal}
+                  className="w-full md:w-auto"
+                  data-test-id="create-first-project-button"
+                >
                   Utwórz pierwszy projekt
                 </Button>
               </div>

@@ -54,10 +54,20 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         detail: `Registration failed: ${error.message}`,
       });
 
-      // Return generic error message for security
+      // Map common Supabase errors to user-friendly messages
+      let userMessage = "Rejestracja nie powiodła się. Spróbuj ponownie.";
+
+      if (error.message.includes("already registered") || error.message.includes("already exists")) {
+        userMessage = "Ten adres e-mail jest już zarejestrowany.";
+      } else if (error.message.includes("invalid") && error.message.includes("email")) {
+        userMessage = "Adres e-mail jest nieprawidłowy. Użyj prostego formatu bez znaków specjalnych.";
+      } else if (error.message.includes("Password")) {
+        userMessage = "Hasło nie spełnia wymagań bezpieczeństwa.";
+      }
+
       return new Response(
         JSON.stringify({
-          message: "Rejestracja nie powiodła się. Spróbuj ponownie.",
+          message: userMessage,
         }),
         {
           status: 400,

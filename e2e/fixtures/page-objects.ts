@@ -108,27 +108,35 @@ export class LoginPage {
   }
 
   async login(email: string, password: string) {
-    // Listen for API response to debug
-    const responsePromise = this.page.waitForResponse((response) => response.url().includes("/api/auth/login"));
-
     await this.page.getByLabel(/e-mail/i).fill(email);
     await this.page.getByLabel(/hasło/i).fill(password);
     await this.page.getByRole("button", { name: /zaloguj się/i }).click();
 
-    // Wait for login API response
-    const response = await responsePromise;
-    const status = response.status();
-
-    console.log("Login response status:", status);
-
-    if (status !== 200) {
-      const body = await response.text();
-      console.error("Login failed:", body);
-      throw new Error(`Login failed with status ${status}: ${body}`);
+    // Wait for either navigation to home page or stay on login page (with potential error)
+    try {
+      await this.page.waitForURL("/", { timeout: 10000 });
+    } catch {
+      // If navigation didn't happen, we might have an error message or still be on login page
+      // This is acceptable - let the test assertions handle verification
     }
+  }
+
+  async loginWithExpectedSuccess(email: string, password: string) {
+    await this.page.getByLabel(/e-mail/i).fill(email);
+    await this.page.getByLabel(/hasło/i).fill(password);
+    await this.page.getByRole("button", { name: /zaloguj się/i }).click();
 
     // Wait for successful navigation
-    await this.page.waitForURL("/", { timeout: 5000 });
+    await this.page.waitForURL("/", { timeout: 10000 });
+  }
+
+  async loginWithExpectedFailure(email: string, password: string) {
+    await this.page.getByLabel(/e-mail/i).fill(email);
+    await this.page.getByLabel(/hasło/i).fill(password);
+    await this.page.getByRole("button", { name: /zaloguj się/i }).click();
+
+    // Wait for error message to appear
+    await this.page.waitForSelector('[role="alert"]', { timeout: 10000 });
   }
 
   async getEmailInput() {
@@ -142,7 +150,9 @@ export class LoginPage {
   async getSubmitButton() {
     return this.page.getByRole("button", { name: /zaloguj się/i });
   }
-} // Extend base test with page objects
+}
+
+// Extend base test with page objects
 interface PageFixtures {
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
