@@ -83,6 +83,22 @@ This project uses two environments:
    - Go to **Workers & Pages** in Cloudflare Dashboard
    - Note your Pages project name (or create a new one)
 
+### ⚠️ **CRITICAL: Setting Environment Variables in Cloudflare Pages**
+
+**The application will fail without these!** Environment variables must be configured in Cloudflare Pages dashboard:
+
+1. Go to **Workers & Pages** in Cloudflare Dashboard
+2. Select your project (e.g., `10x-project`)
+3. Go to **Settings** → **Environment variables**
+4. Add the following variables for **Production** environment:
+   - `SUPABASE_URL`: Your Supabase project URL
+   - `SUPABASE_KEY`: Your Supabase anon/public key
+   - `OPENROUTER_API_KEY`: Your OpenRouter API key
+5. Click **Save**
+6. **Redeploy** your application for changes to take effect
+
+**Note**: GitHub Secrets are used for the CI/CD pipeline, but Cloudflare Pages needs its own environment variables configured separately for runtime.
+
 ## Local Development
 
 The project is configured to work with Cloudflare's local development environment:
