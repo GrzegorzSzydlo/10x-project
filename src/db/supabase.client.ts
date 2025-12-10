@@ -39,10 +39,16 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
 export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
   // Temporary debugging logs - REMOVE IN PRODUCTION
   console.log("=== SUPABASE SERVER INSTANCE DEBUG ===");
-  console.log("SUPABASE_URL:", import.meta.env.SUPABASE_URL ? `${import.meta.env.SUPABASE_URL.substring(0, 30)}...` : "UNDEFINED");
-  console.log("SUPABASE_KEY:", import.meta.env.SUPABASE_KEY ? `${import.meta.env.SUPABASE_KEY.substring(0, 20)}...` : "UNDEFINED");
+  console.log(
+    "SUPABASE_URL:",
+    import.meta.env.SUPABASE_URL ? `${import.meta.env.SUPABASE_URL.substring(0, 30)}...` : "UNDEFINED"
+  );
+  console.log(
+    "SUPABASE_KEY:",
+    import.meta.env.SUPABASE_KEY ? `${import.meta.env.SUPABASE_KEY.substring(0, 20)}...` : "UNDEFINED"
+  );
   console.log("======================================");
-  
+
   const supabase = createServerClient<Database>(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_KEY, {
     cookieOptions,
     cookies: {
