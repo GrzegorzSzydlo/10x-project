@@ -1,6 +1,11 @@
 import { defineMiddleware } from "astro:middleware";
-
+import type { User } from "@supabase/supabase-js";
 import { supabaseClient, createSupabaseServerInstance } from "../db/supabase.client.ts";
+
+interface LocalsSession {
+  user: User;
+  access_token: string;
+}
 
 // Public paths - Auth pages and API endpoints
 const PUBLIC_PATHS = [
@@ -28,7 +33,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     try {
       const { data } = await supabaseClient.auth.getUser(token);
       if (data.user) {
-        locals.session = { user: data.user, access_token: token } as any;
+        locals.session = { user: data.user, access_token: token } as LocalsSession;
         locals.supabase = supabaseClient;
       }
     } catch {
@@ -53,7 +58,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     if (user && !error) {
       // Create session object for backward compatibility
-      locals.session = { user, access_token: "" } as any;
+      locals.session = { user, access_token: "" } as LocalsSession;
       locals.user = {
         email: user.email,
         id: user.id,

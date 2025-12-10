@@ -24,7 +24,7 @@ export function LoginForm() {
       }
 
       // Redirect to home page on success
-      window.location.href = "/";
+      window.location.replace("/");
       return {};
     },
   });
