@@ -90,9 +90,12 @@ jobs:
     name: Deploy to Cloudflare Pages
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
+      deployments: write # Needed for cloudflare/wrangler-action
     environment:
-      name: production
-      url: ${{ steps.deployment.outputs.url }}
+      name: production # Assuming a 'production' environment for secrets
+      url: ${{ steps.deployment.outputs.url }} # Output the deployment URL
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -123,31 +126,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name='10x-project'
-
-  status-notification:
-    name: Deployment Status
-    runs-on: ubuntu-latest
-    needs: [lint, unit-test, build, deploy]
-    if: always()
-    steps:
-      - name: Check job statuses
-        id: check
-        run: |
-          if [[ "${{ needs.lint.result }}" == "success" && "${{ needs.unit-test.result }}" == "success" && "${{ needs.build.result }}" == "success" && "${{ needs.deploy.result }}" == "success" ]]; then
-            echo "status=success" >> $GITHUB_OUTPUT
-            echo "message=✅ All checks passed and deployment successful!" >> $GITHUB_OUTPUT
-          else
-            echo "status=failure" >> $GITHUB_OUTPUT
-            echo "message=❌ Some checks failed or deployment unsuccessful." >> $GITHUB_OUTPUT
-          fi
-
-      - name: Print deployment status
-        run: |
-          echo "Deployment Status: ${{ steps.check.outputs.status }}"
-          echo "${{ steps.check.outputs.message }}"
-          echo ""
-          echo "Job Results:"
-          echo "- Lint: ${{ needs.lint.result }}"
-          echo "- Unit Tests: ${{ needs.unit-test.result }}"
-          echo "- Build: ${{ needs.build.result }}"
-          echo "- Deploy: ${{ needs.deploy.result }}"
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }} # Optional: Adds commit details to deployments
