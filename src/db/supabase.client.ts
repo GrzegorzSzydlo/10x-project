@@ -8,10 +8,13 @@ const supabaseUrl = import.meta.env.SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
 
 // Legacy client for Bearer token authentication (API endpoints)
-export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+export const supabaseClient =
+  supabaseUrl && supabaseAnonKey
+    ? createClient<Database>(supabaseUrl, supabaseAnonKey)
+    : (null as unknown as ReturnType<typeof createClient<Database>>);
 
 // Type alias for consistency
-export type SupabaseClient = typeof supabaseClient;
+export type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
 // Cookie options for SSR authentication
 export const cookieOptions: CookieOptionsWithName = {
