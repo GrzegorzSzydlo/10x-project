@@ -33,7 +33,14 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
 
 // Server-side client for cookie-based authentication (Astro pages)
 export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
-  const supabase = createServerClient<Database>(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_KEY, {
+  const supabaseUrl = import.meta.env.SUPABASE_URL;
+  const supabaseKey = import.meta.env.SUPABASE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return null as unknown as ReturnType<typeof createServerClient<Database>>;
+  }
+
+  const supabase = createServerClient<Database>(supabaseUrl, supabaseKey, {
     cookieOptions,
     cookies: {
       getAll() {
