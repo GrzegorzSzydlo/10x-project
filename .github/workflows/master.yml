@@ -89,9 +89,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
-    environment:
-      name: production
-      url: ${{ steps.deployment.outputs.url }}
+    environment: production
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -130,4 +128,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name='10x-project'
+          wranglerVersion: 4.45.3
           gitHubToken: ${{ secrets.GITHUB_TOKEN }} # Optional: Adds commit details to deployments
