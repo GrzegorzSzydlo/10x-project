@@ -73,10 +73,11 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        echo "Building application with Supabase environment variables"
-        echo "SUPABASE_URL: ${SUPABASE_URL}"
-        echo "SUPABASE_KEY: ${SUPABASE_KEY}"
-        run: npm run build
+        run: |
+          echo "Building application with Supabase environment variables"
+          echo "SUPABASE_URL: ${SUPABASE_URL}"
+          echo "SUPABASE_KEY: ${SUPABASE_KEY}"
+          npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
@@ -109,10 +110,11 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
           echo "Building application with Supabase environment variables"
           echo "SUPABASE_URL: ${SUPABASE_URL}"
           echo "SUPABASE_KEY: ${SUPABASE_KEY}"
-        run: npm run build
+          npm run build
 
       - name: Deploy to Cloudflare Pages
         id: deployment
