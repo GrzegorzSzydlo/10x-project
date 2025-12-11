@@ -1,0 +1,12 @@
+name = "10x-project"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-12-11"
+compatibility_flags = ["nodejs_compat"]
+
+# Zmienne środowiskowe są zarządzane przez Cloudflare Dashboard lub GitHub Actions.
+# Możesz odkomentować poniższą sekcję dla lokalnego developmentu,
+# ale pamiętaj, aby nie commitować prawdziwych sekretów.
+
+# [vars]
+# SUPABASE_URL = "your-supabase-url"
+# SUPABASE_KEY = "your-supabase-key"
