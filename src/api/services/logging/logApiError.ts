@@ -29,6 +29,7 @@ export function logApiError(error: ApiError): void {
 
   // TODO: When error logging table is available, write to database
   // For now, fallback to console logging with structured format
+  // eslint-disable-next-line no-console
   console.error("[API_ERROR]", JSON.stringify(logEntry, null, 2));
 }
 

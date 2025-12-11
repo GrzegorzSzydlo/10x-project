@@ -1,11 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
-import type { User } from "@supabase/supabase-js";
-import { supabaseClient, createSupabaseServerInstance } from "../db/supabase.client.ts";
-
-interface LocalsSession {
-  user: User;
-  access_token: string;
-}
+import { createSupabaseServerInstance } from "../db/supabase.client.ts";
 
 // Public paths - Auth pages and API endpoints
 const PUBLIC_PATHS = [
@@ -21,61 +15,41 @@ const PUBLIC_PATHS = [
   "/api/auth/callback",
 ];
 
-export const onRequest = defineMiddleware(async (context, next) => {
-  const { cookies, url, request, redirect, locals } = context;
+const AUTH_PAGE_PATHS = ["/login", "/register", "/password-recovery"];
 
-  // Legacy support: Extract session from Authorization header for API endpoints
-  const authHeader = request.headers.get("Authorization");
+export const onRequest = defineMiddleware(async ({ cookies, url, request, redirect, locals }, next) => {
+  const supabase = createSupabaseServerInstance({
+    cookies,
+    headers: request.headers,
+  });
 
-  if (authHeader?.startsWith("Bearer ")) {
-    // Bearer token authentication for API endpoints
-    const token = authHeader.substring(7);
-    try {
-      const { data } = await supabaseClient.auth.getUser(token);
-      if (data.user) {
-        locals.session = { user: data.user, access_token: token } as LocalsSession;
-        locals.supabase = supabaseClient;
-      }
-    } catch {
-      // Invalid token, session remains null
-      locals.session = null;
-    }
-  } else {
-    // Cookie-based authentication for Astro pages
-    const supabase = createSupabaseServerInstance({
-      cookies,
-      headers: request.headers,
-    });
+  locals.supabase = supabase;
 
-    locals.supabase = supabase;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    // IMPORTANT: Use getUser() instead of getSession() for security
-    // getUser() validates the JWT by contacting Supabase Auth server
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-    if (user && !error) {
-      // Create session object for backward compatibility
-      locals.session = { user, access_token: "" } as LocalsSession;
-      locals.user = {
+  locals.session = session ?? null;
+  locals.user = user
+    ? {
         email: user.email,
         id: user.id,
-      };
-    } else {
-      locals.session = null;
-      locals.user = null;
-    }
+      }
+    : null;
+
+  const isPublicPath = PUBLIC_PATHS.some((path) => url.pathname.startsWith(path));
+  const isAuthPage = AUTH_PAGE_PATHS.some((path) => url.pathname.startsWith(path));
+  const isUpdatePasswordPage = url.pathname.startsWith("/update-password");
+
+  if (user && isAuthPage) {
+    return redirect("/");
   }
 
-  // Skip auth check for public paths
-  if (PUBLIC_PATHS.includes(url.pathname)) {
-    return next();
-  }
-
-  // Redirect to login for protected routes if not authenticated
-  if (!locals.session?.user) {
+  if (!user && !isPublicPath && !isUpdatePasswordPage) {
     return redirect("/login");
   }
 
