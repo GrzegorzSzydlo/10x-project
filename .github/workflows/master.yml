@@ -73,11 +73,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        run: |
-          echo "Building application with Supabase environment variables"
-          echo "SUPABASE_URL: ${SUPABASE_URL}"
-          echo "SUPABASE_KEY: ${SUPABASE_KEY}"
-          npm run build
+        run: npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
@@ -92,13 +88,20 @@ jobs:
     needs: build
     permissions:
       contents: read
-      deployments: write # Needed for cloudflare/wrangler-action
+      deployments: write
     environment:
-      name: production # Assuming a 'production' environment for secrets
-      url: ${{ steps.deployment.outputs.url }} # Output the deployment URL
+      name: production
+      url: ${{ steps.deployment.outputs.url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+
+      # Zamiast budować od nowa, pobieramy gotowy build z poprzedniego kroku
+      - name: Download build artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: build-output
+          path: dist/
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -106,18 +109,9 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      # Instalujemy zależności (potrzebne dla wrangler)
       - name: Install dependencies
         run: npm ci
-
-      - name: Build application
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        run: |
-          echo "Building application with Supabase environment variables"
-          echo "SUPABASE_URL: ${SUPABASE_URL}"
-          echo "SUPABASE_KEY: ${SUPABASE_KEY}"
-          npm run build
 
       - name: Upload secrets to Cloudflare Pages
         env:
