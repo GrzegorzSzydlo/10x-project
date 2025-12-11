@@ -119,6 +119,16 @@ jobs:
           echo "SUPABASE_KEY: ${SUPABASE_KEY}"
           npm run build
 
+      - name: Upload secrets to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          npx wrangler pages secret put SUPABASE_URL --project-name '10x-project' <<< "$SUPABASE_URL"
+          npx wrangler pages secret put SUPABASE_KEY --project-name '10x-project' <<< "$SUPABASE_KEY"
+
       - name: Deploy to Cloudflare Pages
         id: deployment
         uses: cloudflare/wrangler-action@v3
