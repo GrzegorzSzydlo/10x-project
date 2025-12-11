@@ -120,10 +120,3 @@ jobs:
           command: pages deploy dist --project-name=10x-project
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: 4.45.3
-          # Automatyczne przesyłanie sekretów:
-          secrets: |
-            SUPABASE_URL
-            SUPABASE_KEY
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
