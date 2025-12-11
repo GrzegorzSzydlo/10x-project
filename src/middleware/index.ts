@@ -18,10 +18,28 @@ const PUBLIC_PATHS = [
 const AUTH_PAGE_PATHS = ["/login", "/register", "/password-recovery"];
 
 export const onRequest = defineMiddleware(async ({ cookies, url, request, redirect, locals }, next) => {
+  const supabaseUrl = import.meta.env.SUPABASE_URL;
+  const supabaseKey = import.meta.env.SUPABASE_KEY;
+  const maskedSupabaseKey =
+    typeof supabaseKey === "string" && supabaseKey.length >= 8
+      ? `${supabaseKey.slice(0, 4)}...${supabaseKey.slice(-4)}`
+      : (supabaseKey ?? "undefined");
+
+  console.info("[Middleware] SUPABASE_URL:", supabaseUrl ?? "undefined");
+  console.info("[Middleware] SUPABASE_KEY:", maskedSupabaseKey);
+
   const supabase = createSupabaseServerInstance({
     cookies,
     headers: request.headers,
   });
+
+  if (!supabase) {
+    console.error("[Middleware] Supabase client failed to initialize", {
+      hasUrl: Boolean(supabaseUrl),
+      hasKey: Boolean(supabaseKey),
+    });
+    return next();
+  }
 
   locals.supabase = supabase;
 
