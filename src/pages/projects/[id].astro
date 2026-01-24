@@ -1,0 +1,82 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { AppHeader } from "../../components/AppHeader";
+import { ProjectWorkspace } from "../../components/dashboard/ProjectWorkspace";
+import { devLog } from "../../api/utils";
+import type { ProjectDetailsDto, User } from "../../types";
+
+// Check if user is authenticated
+if (!Astro.locals.session) {
+  return Astro.redirect("/login");
+}
+
+const authUser = Astro.locals.session.user;
+const { id: projectId } = Astro.params;
+
+if (!projectId) {
+  return new Response("Project ID is required", { status: 400 });
+}
+
+// Get user data with role information
+let { data: userData, error: userError } = await Astro.locals.supabase
+  .from("users")
+  .select("*")
+  .eq("id", authUser.id)
+  .single();
+
+// If user doesn't exist in public.users table, create it
+if (userError?.code === "PGRST116" || !userData) {
+  const { data: newUser, error: insertError } = await Astro.locals.supabase
+    .from("users")
+    .insert({
+      id: authUser.id,
+      role: "team_member",
+    })
+    .select()
+    .single();
+
+  if (insertError) {
+    devLog("error", "Failed to create user profile:", insertError);
+    return new Response("Failed to create user profile", { status: 500 });
+  }
+
+  userData = newUser;
+}
+
+const user = userData as User;
+
+// Check if user is a member of the project
+const { data: membershipData, error: membershipError } = await Astro.locals.supabase
+  .from("project_members")
+  .select("*")
+  .eq("project_id", projectId)
+  .eq("user_id", authUser.id)
+  .single();
+
+if (membershipError || !membershipData) {
+  devLog("error", "User is not a member of the project:", membershipError);
+  return new Response("Forbidden", { status: 403 });
+}
+
+// Get project details
+const { data: projectData, error: projectError } = await Astro.locals.supabase
+  .from("projects")
+  .select("*")
+  .eq("id", projectId)
+  .single();
+
+if (projectError || !projectData) {
+  devLog("error", "Failed to fetch project:", projectError);
+  return new Response("Project not found", { status: 404 });
+}
+
+const project = projectData as ProjectDetailsDto;
+---
+
+<Layout title={`${project.name} - 10x Project`}>
+  <AppHeader user={user} userEmail={authUser.email} slot="header" client:load />
+
+  <main class="min-h-screen bg-gray-50">
+    <ProjectWorkspace client:load initialProjectData={project} userRole={user.role} />
+  </main>
+</Layout>

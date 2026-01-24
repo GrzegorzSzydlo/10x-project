@@ -59,7 +59,13 @@ export type MilestoneDto = Milestone;
  * Represents a task summary, formatted for display on a Kanban board.
  * Used in the grouped response for `GET /projects/{projectId}/tasks`.
  */
-export type TaskCardDto = Pick<Task, "id" | "title" | "assignee_id" | "parent_task_id" | "display_order">;
+export type TaskCardDto = Pick<
+  Task,
+  "id" | "title" | "description" | "assignee_id" | "parent_task_id" | "display_order"
+> & {
+  assignee_name?: string;
+  milestone_name?: string;
+};
 
 /**
  * Represents the full details of a task.
@@ -106,16 +112,35 @@ export type AddProjectMemberCommand = Pick<ProjectMember, "user_id">;
  * Command for creating a new milestone.
  * Used in `POST /projects/{projectId}/milestones`.
  */
-export type CreateMilestoneCommand = Pick<Milestone, "name" | "description" | "due_date">;
+export interface CreateMilestoneCommand {
+  name: string;
+  description?: string;
+  due_date?: string;
+}
+
+/**
+ * Command for updating an existing milestone.
+ * All fields are optional, allowing for partial updates.
+ * Used in `PATCH /milestones/{milestoneId}`.
+ */
+export interface UpdateMilestoneCommand {
+  name?: string;
+  description?: string | null;
+  due_date?: string | null;
+}
 
 /**
  * Command for creating a new task.
  * Used in `POST /projects/{projectId}/tasks`.
  */
-export type CreateTaskCommand = Pick<
-  Task,
-  "title" | "description" | "assignee_id" | "milestone_id" | "parent_task_id" | "due_date"
->;
+export interface CreateTaskCommand {
+  title: string;
+  description?: string;
+  assignee_id?: string;
+  milestone_id?: string;
+  parent_task_id?: string;
+  due_date?: string;
+}
 
 /**
  * Command for updating an existing task.
@@ -125,3 +150,30 @@ export type CreateTaskCommand = Pick<
 export type UpdateTaskCommand = Partial<
   Pick<Task, "title" | "description" | "assignee_id" | "milestone_id" | "due_date" | "status" | "display_order">
 >;
+
+/**
+ * View Models
+ *
+ * These types define specialized data structures for specific UI views and components.
+ * They often combine or transform DTOs to better serve the needs of the frontend.
+ */
+
+/**
+ * Represents tasks organized by status for the Kanban board display.
+ * Maps each TaskStatus to an array of task cards.
+ */
+export type KanbanColumns = Record<TaskStatus, TaskCardDto[]>;
+
+/**
+ * Form values for creating or editing a task.
+ * Used with form validation libraries (e.g., zod) and form components.
+ */
+export interface TaskFormValues {
+  title: string;
+  description?: string;
+  assignee_id?: string;
+  milestone_id?: string;
+  due_date?: Date;
+  status: TaskStatus;
+  parent_task_id?: string;
+}

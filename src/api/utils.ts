@@ -25,3 +25,26 @@ export function devLog(level: LogLevel, ...args: unknown[]): void {
     console[level](...args);
   }
 }
+
+/**
+ * Creates a JSON response with proper headers
+ * @param data - Data to serialize as JSON
+ * @param status - HTTP status code (default: 200)
+ * @returns Response object with JSON content type
+ */
+export function jsonResponse(data: unknown, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+/**
+ * Creates an error response with JSON format
+ * @param message - Error message to return
+ * @param status - HTTP status code (default: 500)
+ * @returns Response object with error in JSON format
+ */
+export function errorResponse(message: string, status = 500): Response {
+  return jsonResponse({ error: message }, status);
+}
