@@ -3,9 +3,12 @@ import type { TaskCardDto } from "@/types";
 interface TaskCardProps {
   task: TaskCardDto;
   onClick?: () => void;
+  draggable?: boolean;
+  onDragStart?: (e: React.DragEvent<HTMLButtonElement>) => void;
+  onDragEnd?: (e: React.DragEvent<HTMLButtonElement>) => void;
 }
 
-export function TaskCard({ task, onClick }: TaskCardProps) {
+export function TaskCard({ task, onClick, draggable, onDragStart, onDragEnd }: TaskCardProps) {
   return (
     <button
       type="button"
@@ -16,6 +19,9 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
           onClick?.();
         }
       }}
+      draggable={draggable}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
       className="w-full text-left rounded-lg border bg-card p-3 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <div className="space-y-2">
