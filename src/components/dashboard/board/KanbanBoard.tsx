@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { fetchProjectTasksWithFilters } from "@/lib/api/tasks";
+import { fetchProjectTasksWithFilters, updateTask } from "@/lib/api/tasks";
 import { KanbanColumn } from "./KanbanColumn";
 import { KanbanToolbar } from "./KanbanToolbar";
 import { CreateTaskDialog } from "./CreateTaskDialog";
@@ -58,6 +58,19 @@ export function KanbanBoard({ projectId }: KanbanBoardProps) {
     // TODO: Implement filtering
   };
 
+  // Obsługa drag & drop: zapamiętaj przeciągane zadanie
+  const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+
+  // Funkcja do obsługi upuszczenia zadania do nowej kolumny
+  const handleTaskDrop = async (taskId: string, newStatus: TaskStatus) => {
+    try {
+      await updateTask(taskId, { status: newStatus });
+      loadTasks();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update task status");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -91,7 +104,15 @@ export function KanbanBoard({ projectId }: KanbanBoardProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {TASK_STATUSES.map((status) => (
-          <KanbanColumn key={status} status={status} tasks={tasks?.[status] || []} onTaskClick={handleTaskClick} />
+          <KanbanColumn
+            key={status}
+            status={status}
+            tasks={tasks?.[status] || []}
+            onTaskClick={handleTaskClick}
+            onTaskDrop={handleTaskDrop}
+            draggedTaskId={draggedTaskId}
+            setDraggedTaskId={setDraggedTaskId}
+          />
         ))}
       </div>
 
